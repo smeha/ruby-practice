@@ -1,18 +1,18 @@
-require:
+plugins:
   - rubocop-rspec
 
 AllCops:
   TargetRubyVersion: 3.4
   NewCops: enable
   Exclude:
-    - "Gemfile"
-    - "Gemfile.lock"
+    - 'Gemfile'
+    - 'Gemfile.lock'
 
 # Single-file practice scripts define methods at the top level — expected here.
 Style/TopLevelMethodDefinition:
   Enabled: false
 
-# Prefer single quotes (RuboCop default), already used across the project.
+# Prefer single quotes, already used across the project.
 Style/StringLiterals:
   EnforcedStyle: single_quotes
 
@@ -30,3 +30,29 @@ Layout/LineLength:
 # Allow method length flexibility for challenge functions.
 Metrics/MethodLength:
   Max: 20
+
+# Challenge functions have inherent branching complexity — raise limits slightly.
+Metrics/AbcSize:
+  Max: 25
+
+Metrics/CyclomaticComplexity:
+  Max: 10
+
+Metrics/PerceivedComplexity:
+  Max: 10
+
+# All functions in this project are top-level, not class/module methods.
+RSpec/DescribeClass:
+  Enabled: false
+
+# Multiple describe blocks per file is fine when each covers a separate function.
+RSpec/MultipleDescribes:
+  Enabled: false
+
+# Allow up to 2 expectations per example for related assertions.
+RSpec/MultipleExpectations:
+  Max: 2
+
+# Allow slightly longer examples for data setup in integration-style specs.
+RSpec/ExampleLength:
+  Max: 10

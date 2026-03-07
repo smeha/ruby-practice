@@ -15,12 +15,12 @@ def subsequence?(array, word)
 end
 
 # Longest substring without repeating characters. O(n) sliding window.
-def length_of_longest_substring(s)
+def length_of_longest_substring(str)
   last = {}
   left = 0
   best = 0
 
-  s.each_char.with_index do |ch, right|
+  str.each_char.with_index do |ch, right|
     left = last[ch] + 1 if last.key?(ch) && last[ch] >= left
     last[ch] = right
     best = [best, right - left + 1].max
@@ -29,15 +29,15 @@ def length_of_longest_substring(s)
   best
 end
 
-# Return true if s and t are anagrams of each other. O(n)
-def anagram?(s, t)
-  return false unless s.length == t.length
+# Return true if str1 and str2 are anagrams of each other. O(n)
+def anagram?(str1, str2)
+  return false unless str1.length == str2.length
 
   freq = Hash.new(0)
-  s.each_char { |ch| freq[ch] += 1 }
-  t.each_char do |ch|
+  str1.each_char { |ch| freq[ch] += 1 }
+  str2.each_char do |ch|
     freq[ch] -= 1
-    return false if freq[ch] < 0
+    return false if freq[ch].negative?
   end
 
   true
@@ -52,15 +52,15 @@ def all_anagrams?(arr)
 end
 
 # Palindrome check — ignores non-alphanumeric characters, case-insensitive. O(n)
-def palindrome?(s)
+def palindrome?(str)
   i = 0
-  j = s.length - 1
+  j = str.length - 1
 
   while i < j
-    i += 1 while i < j && s[i] !~ /[A-Za-z0-9]/
-    j -= 1 while i < j && s[j] !~ /[A-Za-z0-9]/
+    i += 1 while i < j && str[i] !~ /[A-Za-z0-9]/
+    j -= 1 while i < j && str[j] !~ /[A-Za-z0-9]/
 
-    return false unless s[i].downcase == s[j].downcase
+    return false unless str[i].downcase == str[j].downcase
 
     i += 1
     j -= 1
@@ -70,11 +70,11 @@ def palindrome?(s)
 end
 
 # Return the index of the first non-repeating character, or -1. O(n)
-def first_uniq_char(s)
+def first_uniq_char(str)
   freq = Hash.new(0)
-  s.each_char { |ch| freq[ch] += 1 }
+  str.each_char { |ch| freq[ch] += 1 }
 
-  s.each_char.with_index do |ch, i|
+  str.each_char.with_index do |ch, i|
     return i if freq[ch] == 1
   end
 
@@ -107,11 +107,11 @@ def bracket_balance(str)
       balance += 1
     elsif char == ')'
       balance -= 1
-      return 0 if balance < 0
+      return 0 if balance.negative?
     end
   end
 
-  balance == 0 ? 1 : 0
+  balance.zero? ? 1 : 0
 end
 
 # Given a string of two times separated by a hyphen (e.g. "9:00am-10:30pm"),
@@ -122,7 +122,7 @@ def minutes_count(str)
 
   to_minutes = lambda do |time_str|
     time = time_str[0..-3]
-    meridian = time_str[-2..-1]
+    meridian = time_str[-2..]
     hours, minutes = time.split(':').map(&:to_i)
 
     hours = 0 if hours == 12
@@ -135,7 +135,7 @@ def minutes_count(str)
   end_minutes   = to_minutes.call(end_str)
 
   difference = end_minutes - start_minutes
-  difference += 24 * 60 if difference < 0
+  difference += 24 * 60 if difference.negative?
 
   difference.to_s
 end

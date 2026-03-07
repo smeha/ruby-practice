@@ -26,7 +26,7 @@ case choice
 when 'prime'
   print '  Enter number: '
   n = $stdin.gets.chomp.to_i
-  puts "  #{n} is prime: #{is_prime?(n)}"
+  puts "  #{n} is prime: #{prime?(n)}"
 
 when 'evalpoly'
   print '  Enter coefficients (space-separated, highest degree first): '

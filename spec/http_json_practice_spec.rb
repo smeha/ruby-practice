@@ -1,4 +1,4 @@
-WIZARD_URL = 'https://coderbyte.com/api/challenges/json/wizard-list'
+WIZARD_URL = 'https://coderbyte.com/api/challenges/json/wizard-list'.freeze
 
 RSpec.describe '#best_wizard_per_house' do
   it 'picks the wizard with the most friends in a house' do
