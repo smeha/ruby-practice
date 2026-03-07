@@ -14,5 +14,5 @@ end
 def eval_poly(coeffs, x)
   raise ArgumentError, 'coeffs must be an Array' unless coeffs.is_a?(Array)
 
-  coeffs.reduce(0) { |acc, c| acc * x + c }
+  coeffs.reduce(0) { |acc, c| (acc * x) + c }
 end

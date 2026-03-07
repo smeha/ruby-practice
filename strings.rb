@@ -128,7 +128,7 @@ def minutes_count(str)
     hours = 0 if hours == 12
     hours += 12 if meridian.downcase == 'pm'
 
-    hours * 60 + minutes
+    (hours * 60) + minutes
   end
 
   start_minutes = to_minutes.call(start_str)
