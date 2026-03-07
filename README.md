@@ -1,4 +1,3 @@
-
 # Ruby language practice project
 The project is to practice Ruby language
 
