@@ -1,6 +1,6 @@
-require "net/http"
-require "uri"
-require "json"
+require 'net/http'
+require 'uri'
+require 'json'
 
 # Fetch the wizard-list JSON, then for each house find the character
 # with the most friends. Break ties by choosing the name earliest alphabetically.
@@ -11,7 +11,7 @@ def wizard_list_challenge
 end
 
 def fetch_wizard_list
-  uri = URI("https://coderbyte.com/api/challenges/json/wizard-list")
+  uri = URI('https://coderbyte.com/api/challenges/json/wizard-list')
   JSON.parse(Net::HTTP.get(uri))
 end
 
@@ -20,19 +20,19 @@ def best_wizard_per_house(data)
   result = {}
 
   data.each do |character|
-    house = character["house"]
+    house = character['house']
     next if house.nil? || house.strip.empty?
 
-    name         = character["name"]
-    friend_count = character["friends"].length
+    name         = character['name']
+    friend_count = character['friends'].length
 
     current = result[house]
-    if current.nil? ||
-       friend_count > current["friends"].length ||
-       (friend_count == current["friends"].length && name < current["name"])
-      result[house] = character
-    end
+    next unless current.nil? ||
+                friend_count > current['friends'].length ||
+                (friend_count == current['friends'].length && name < current['name'])
+
+    result[house] = character
   end
 
-  result.transform_values { |c| c["name"] }
+  result.transform_values { |c| c['name'] }
 end

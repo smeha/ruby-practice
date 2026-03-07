@@ -1,4 +1,4 @@
-require "json"
+require 'json'
 
 # Return true if the letters of word appear in order in the array
 # (not necessarily contiguous). O(n)
@@ -7,6 +7,7 @@ def subsequence?(array, word)
 
   array.each do |char|
     break if i == word.length
+
     i += 1 if char == word[i]
   end
 
@@ -85,9 +86,9 @@ def group_by_domain(emails)
   grouped = Hash.new { |h, k| h[k] = [] }
 
   emails.each do |email|
-    next unless email.include?("@")
+    next unless email.include?('@')
 
-    user, domain = email.split("@", 2)
+    user, domain = email.split('@', 2)
     next if user.nil? || user.empty? || domain.nil? || domain.empty?
 
     grouped[domain] << user
@@ -102,9 +103,9 @@ def bracket_balance(str)
   balance = 0
 
   str.each_char do |char|
-    if char == "("
+    if char == '('
       balance += 1
-    elsif char == ")"
+    elsif char == ')'
       balance -= 1
       return 0 if balance < 0
     end
@@ -117,14 +118,15 @@ end
 # return the total number of minutes between them as a string.
 # Handles wrap-around midnight.
 def minutes_count(str)
-  start_str, end_str = str.strip.split("-")
+  start_str, end_str = str.strip.split('-')
 
   to_minutes = lambda do |time_str|
-    time, meridian = time_str[0..-3], time_str[-2..-1]
-    hours, minutes = time.split(":").map(&:to_i)
+    time = time_str[0..-3]
+    meridian = time_str[-2..-1]
+    hours, minutes = time.split(':').map(&:to_i)
 
     hours = 0 if hours == 12
-    hours += 12 if meridian.downcase == "pm"
+    hours += 12 if meridian.downcase == 'pm'
 
     hours * 60 + minutes
   end

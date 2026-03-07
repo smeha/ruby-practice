@@ -12,7 +12,7 @@ end
 # Given coefficients and x, evaluate the polynomial using Horner's method.
 # coeffs are highest-degree first: [a, b, c] => ax² + bx + c
 def eval_poly(coeffs, x)
-  raise ArgumentError, "coeffs must be an Array" unless coeffs.is_a?(Array)
+  raise ArgumentError, 'coeffs must be an Array' unless coeffs.is_a?(Array)
 
   coeffs.reduce(0) { |acc, c| acc * x + c }
 end

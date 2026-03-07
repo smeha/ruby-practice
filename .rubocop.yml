@@ -1,0 +1,32 @@
+require:
+  - rubocop-rspec
+
+AllCops:
+  TargetRubyVersion: 3.4
+  NewCops: enable
+  Exclude:
+    - "Gemfile"
+    - "Gemfile.lock"
+
+# Single-file practice scripts define methods at the top level — expected here.
+Style/TopLevelMethodDefinition:
+  Enabled: false
+
+# Prefer single quotes (RuboCop default), already used across the project.
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+
+Style/StringLiteralsInInterpolation:
+  EnforcedStyle: single_quotes
+
+# Disable frozen string literal requirement for practice scripts.
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+# Allow slightly longer lines for readability in specs and aligned assignments.
+Layout/LineLength:
+  Max: 120
+
+# Allow method length flexibility for challenge functions.
+Metrics/MethodLength:
+  Max: 20
