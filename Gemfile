@@ -8,6 +8,6 @@ group :test do
 end
 
 group :development, :test do
-  gem "rubocop", "~> 1.85", require: false
-  gem "rubocop-rspec", "~> 3.9",  require: false
+  gem 'rubocop', '~> 1.85', require: false
+  gem 'rubocop-rspec', '~> 3.9', require: false
 end

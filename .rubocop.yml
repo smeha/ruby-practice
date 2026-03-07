@@ -5,8 +5,8 @@ AllCops:
   TargetRubyVersion: 3.4
   NewCops: enable
   Exclude:
-    - 'Gemfile'
-    - 'Gemfile.lock'
+    # - 'Gemfile'
+    # - 'Gemfile.lock'
 
 # Single-file practice scripts define methods at the top level — expected here.
 Style/TopLevelMethodDefinition:
