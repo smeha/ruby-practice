@@ -1,6 +1,7 @@
 require_relative 'math'
 require_relative 'strings'
 require_relative 'sorting'
+require_relative 'arrays'
 require_relative 'http_json_practice'
 
 puts 'Available exercises:'
@@ -16,6 +17,7 @@ puts '  groupdomain    - Group emails by domain (outputs JSON)'
 puts '  quicksort      - Sort an array with quicksort'
 puts '  brackets       - Validate matched parentheses'
 puts '  timediff       - Minutes between two times (e.g. 9:00am-10:30pm)'
+puts '  maxsubarray    - Maximum subarray sum (Kadane\'s algorithm)'
 puts '  wizardlist     - HTTP challenge: house => most-friends wizard'
 puts
 print 'Enter exercise name: '
@@ -89,6 +91,12 @@ when 'timediff'
   print '  Enter time range (e.g. 9:00am-10:30pm): '
   s = $stdin.gets.chomp
   puts "  Minutes: #{minutes_count(s)}"
+
+when 'maxsubarray'
+  print '  Enter numbers (space-separated): '
+  nums = $stdin.gets.chomp.split.map(&:to_i)
+  sum, sub = max_subarray(nums)
+  puts "  Max sum: #{sum}, subarray: #{sub.inspect}"
 
 when 'wizardlist'
   puts '  Fetching wizard list...'
