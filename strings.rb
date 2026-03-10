@@ -139,3 +139,33 @@ def minutes_count(str)
 
   difference.to_s
 end
+
+# Given a string where its a Roman number
+# Convert to integer. Hash map lookup
+def roman_to_int(str)
+  roman_map = {
+    'I' => 1,
+    'V' => 5,
+    'X' => 10,
+    'L' => 50,
+    'C' => 100,
+    'D' => 500,
+    'M' => 1000
+  }
+
+  str = str.upcase
+  raise ArgumentError, 'invalid Roman numeral string' if str.empty? || str.chars.any? { |c| !roman_map.key?(c) }
+
+  result = 0
+  str.each_char.with_index do |char, i|
+    current_value = roman_map[char] || 0
+    next_value = roman_map[str[i + 1]] || 0
+    if current_value < next_value
+      result -= current_value
+    else
+      result += current_value
+    end
+  end
+
+  result
+end

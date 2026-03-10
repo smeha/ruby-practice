@@ -184,3 +184,13 @@ RSpec.describe '#minutes_count' do
     expect(minutes_count('12:00pm-1:00pm')).to eq('60')
   end
 end
+
+RSpec.describe '#roman_to_int' do
+  it 'handles xi correctly' do
+    expect(roman_to_int('xi')).to eq(11)
+  end
+
+  it 'raises ArgumentError when input containing other characters rather than Roman numerals' do
+    expect { roman_to_int('stst') }.to raise_error(ArgumentError, 'invalid Roman numeral string')
+  end
+end

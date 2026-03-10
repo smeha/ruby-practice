@@ -19,6 +19,7 @@ puts '  brackets       - Validate matched parentheses'
 puts '  timediff       - Minutes between two times (e.g. 9:00am-10:30pm)'
 puts '  maxsubarray    - Maximum subarray sum (Kadane\'s algorithm)'
 puts '  wizardlist     - HTTP challenge: house => most-friends wizard'
+puts '  romantoint     - Roman number to integer number'
 puts
 print 'Enter exercise name: '
 
@@ -103,6 +104,11 @@ when 'wizardlist'
   result = wizard_list_challenge
   require 'json'
   puts "  #{JSON.generate(result)}"
+
+when 'romantoint'
+  puts '  Enter Roman number(e.g. XIV): '
+  s = $stdin.gets.chomp
+  puts "  Integer number: #{roman_to_int(s)}"
 
 else
   puts 'Unknown exercise.'

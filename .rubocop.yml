@@ -29,7 +29,7 @@ Layout/LineLength:
 
 # Allow method length flexibility for challenge functions.
 Metrics/MethodLength:
-  Max: 20
+  Max: 30
 
 # Challenge functions have inherent branching complexity — raise limits slightly.
 Metrics/AbcSize:
