@@ -186,11 +186,39 @@ RSpec.describe '#minutes_count' do
 end
 
 RSpec.describe '#roman_to_int' do
-  it 'handles xi correctly' do
-    expect(roman_to_int('xi')).to eq(11)
+  it 'converts a single numeral' do
+    expect(roman_to_int('V')).to eq(5)
   end
 
-  it 'raises ArgumentError when input containing other characters rather than Roman numerals' do
+  it 'converts addition-only numerals' do
+    expect(roman_to_int('III')).to eq(3)
+  end
+
+  it 'converts a single subtractive pair' do
+    expect(roman_to_int('IV')).to eq(4)
+    expect(roman_to_int('IX')).to eq(9)
+  end
+
+  it 'converts mixed addition and subtraction' do
+    expect(roman_to_int('XIV')).to eq(14)
+    expect(roman_to_int('LVIII')).to eq(58)
+  end
+
+  it 'converts a complex numeral' do
+    expect(roman_to_int('MCMXCIV')).to eq(1994)
+  end
+
+  it 'accepts lowercase input' do
+    expect(roman_to_int('xi')).to eq(11)
+    expect(roman_to_int('xiv')).to eq(14)
+  end
+
+  it 'raises ArgumentError for an empty string' do
+    expect { roman_to_int('') }.to raise_error(ArgumentError, 'invalid Roman numeral string')
+  end
+
+  it 'raises ArgumentError when input contains non-Roman characters' do
     expect { roman_to_int('stst') }.to raise_error(ArgumentError, 'invalid Roman numeral string')
+    expect { roman_to_int('X1V') }.to raise_error(ArgumentError, 'invalid Roman numeral string')
   end
 end

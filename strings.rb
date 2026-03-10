@@ -140,8 +140,9 @@ def minutes_count(str)
   difference.to_s
 end
 
-# Given a string where its a Roman number
-# Convert to integer. Hash map lookup
+# Convert a Roman numeral string to an integer. O(n).
+# Accepts lowercase input. Raises ArgumentError for empty or invalid strings.
+# Uses subtractive notation: subtract current value when it is less than the next.
 def roman_to_int(str)
   roman_map = {
     'I' => 1,
