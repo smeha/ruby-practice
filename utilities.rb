@@ -133,3 +133,61 @@ class JobQueue
     raise "invalid transition from #{job.status}"
   end
 end
+
+# Represents a user who can rate movies. Ratings are stored per title, 1-5.
+class User
+  attr_reader :id, :rating_list
+
+  def initialize(id)
+    @id = id
+    @rating_list = {}
+  end
+
+  def rate(title, rating)
+    raise ArgumentError, 'rating must be between 1 and 5' unless (1..5).include?(rating)
+
+    @rating_list[title] = rating
+  end
+end
+
+# A movie with a title and watched/unwatched status.
+class Movie
+  attr_accessor :title, :status
+
+  def initialize(title)
+    @title = title
+    @status = 'unwatched'
+  end
+end
+
+# Watch list queue. Add movies, watch the next one, and display all with ratings.
+class MovieQueue
+  attr_reader :movies
+
+  def initialize
+    @movies = []
+  end
+
+  def add_movie(title)
+    @movies << Movie.new(title)
+  end
+
+  def watch_next(user, rating)
+    movie = @movies.find { |m| m.status == 'unwatched' }
+    return nil unless movie
+
+    movie.status = 'watched'
+    user.rate(movie.title, rating)
+    movie
+  end
+
+  def list_all(users)
+    @movies.map do |movie|
+      ratings = users.each_with_object({}) do |user, h|
+        r = user.rating_list[movie.title]
+        h[user.id] = r if r
+      end
+      { title: movie.title, status: movie.status, ratings: ratings }
+    end
+  end
+end

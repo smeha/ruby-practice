@@ -27,6 +27,7 @@ puts '  aggdata        - Aggregate sample data'
 puts '  ratelimiter    - Simple rate limiter'
 puts '  flakytests     - Find flaky tests'
 puts '  jobqueue       - Job queue with retry behavior'
+puts '  movielist      - Watch list of movies with user ratings'
 puts
 print 'Enter exercise name: '
 
@@ -180,6 +181,25 @@ when 'jobqueue'
   puts '  Starting next job in the queue:'
   job = job_queue.start_next
   puts "  job-id:#{job.id} | status:#{job.status} | attempts:#{job.attempts}"
+
+when 'movielist'
+  puts "  Creating 1 new user and rating 'Avatar' as 4:"
+  user_part_one = User.new(1)
+  user_part_one.rate('Avatar', 4)
+  pp user_part_one.rating_list
+  puts '  Creating movie queue'
+  movie_queue = MovieQueue.new
+  puts '  Adding 2 movies to the queue'
+  movie_queue.add_movie('Avatar')
+  movie_queue.add_movie('Avatar 2')
+  puts '  Creating 2 new users, they watch the queue one by one and give ratings'
+  users = []
+  users << User.new(2)
+  users << User.new(3)
+  movie_queue.watch_next(users[0], 3)
+  movie_queue.watch_next(users[1], 4)
+  puts '  List all movies with status and user ratings:'
+  pp movie_queue.list_all(users)
 
 else
   puts 'Unknown exercise.'

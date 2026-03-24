@@ -231,3 +231,83 @@ RSpec.describe JobQueue do
     end
   end
 end
+
+RSpec.describe User do
+  let(:user) { described_class.new(1) }
+
+  it 'stores a rating for a movie' do
+    user.rate('Avatar', 4)
+    expect(user.rating_list['Avatar']).to eq(4)
+  end
+
+  it 'overwrites a previous rating' do
+    user.rate('Avatar', 3)
+    user.rate('Avatar', 5)
+    expect(user.rating_list['Avatar']).to eq(5)
+  end
+
+  it 'raises for rating below 1' do
+    expect { user.rate('Avatar', 0) }.to raise_error(ArgumentError)
+  end
+
+  it 'raises for rating above 5' do
+    expect { user.rate('Avatar', 6) }.to raise_error(ArgumentError)
+  end
+end
+
+RSpec.describe Movie do
+  it 'defaults status to unwatched' do
+    movie = described_class.new('Avatar')
+    expect(movie.title).to eq('Avatar')
+    expect(movie.status).to eq('unwatched')
+  end
+end
+
+RSpec.describe MovieQueue do
+  let(:queue) { described_class.new }
+  let(:user1) { User.new(1) } # rubocop:disable RSpec/IndexedLet
+  let(:user2) { User.new(2) } # rubocop:disable RSpec/IndexedLet
+
+  describe '#add_movie' do
+    it 'adds a movie to the queue' do
+      queue.add_movie('Avatar')
+      expect(queue.movies.length).to eq(1)
+      expect(queue.movies.first.title).to eq('Avatar')
+    end
+  end
+
+  describe '#watch_next' do
+    it 'watches the first unwatched movie and rates it' do
+      queue.add_movie('Avatar')
+      movie = queue.watch_next(user1, 4)
+      expect(movie.status).to eq('watched')
+      expect(user1.rating_list['Avatar']).to eq(4)
+    end
+
+    it 'skips already watched movies' do
+      queue.add_movie('Avatar')
+      queue.add_movie('Avatar 2')
+      queue.watch_next(user1, 3)
+      movie = queue.watch_next(user2, 5)
+      expect(movie.title).to eq('Avatar 2')
+    end
+
+    it 'returns nil when all movies are watched' do
+      queue.add_movie('Avatar')
+      queue.watch_next(user1, 3)
+      expect(queue.watch_next(user2, 4)).to be_nil
+    end
+  end
+
+  describe '#list_all' do
+    it 'lists all movies with statuses and ratings' do
+      queue.add_movie('Avatar')
+      queue.add_movie('Avatar 2')
+      queue.watch_next(user1, 3)
+
+      result = queue.list_all([user1, user2])
+      expect(result[0]).to eq({ title: 'Avatar', status: 'watched', ratings: { 1 => 3 } })
+      expect(result[1]).to eq({ title: 'Avatar 2', status: 'unwatched', ratings: {} })
+    end
+  end
+end
