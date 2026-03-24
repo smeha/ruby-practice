@@ -34,6 +34,13 @@ Metrics/CyclomaticComplexity:
 Metrics/PerceivedComplexity:
   Max: 10
 
+# Practice project keeps multiple small classes in one file.
+# Style/Documentation:
+#   Enabled: false
+
+Style/OneClassPerFile:
+  Enabled: false
+
 # All functions in this project are top-level, not class/module methods.
 RSpec/DescribeClass:
   Enabled: false

@@ -26,6 +26,7 @@ puts '  romantoint     - Roman number to integer number'
 puts '  aggdata        - Aggregate sample data'
 puts '  ratelimiter    - Simple rate limiter'
 puts '  flakytests     - Find flaky tests'
+puts '  jobqueue       - Job queue with retry behavior'
 puts
 print 'Enter exercise name: '
 
@@ -139,9 +140,9 @@ when 'ratelimiter'
     ['user1', 11]
   ]
 
-  puts "  Allow at most max requests is set to #{max_requests}"
-  puts "  Within a rolling window seconds is set to #{window_seconds}"
-  puts '  Will be tested against allow?'
+  puts "  Allow at most max requests set to #{max_requests}"
+  puts "  Within a rolling window seconds set to #{window_seconds}"
+  puts "  Will be tested against 'allow?'"
   limiter = RateLimiter.new(max_requests, window_seconds)
   sample_limiter_tests.each do |user, timestamp|
     puts "  user=#{user} time=#{timestamp} => #{limiter.allow?(user, timestamp)}"
@@ -153,10 +154,32 @@ when 'flakytests'
     { test_name: 'creates user', status: 'failed' },
     { test_name: 'deletes user', status: 'passed' }
   ]
+
   puts '  Sample data:'
   pp sample_flaky_tests
   puts '  Flaky test(s):'
   pp find_flaky_tests(sample_flaky_tests)
+
+when 'jobqueue'
+  max_attempts = 3
+
+  puts "  Creating a Job Queue with max attempts set to #{max_attempts}"
+  job_queue = JobQueue.new(max_attempts)
+  puts "  Adding 2 jobs to queue 'job-1' and 'job-2'"
+  job_queue.add_job('job-1')
+  job_queue.add_job('job-2')
+  puts '  Starting next job in the queue:'
+  job = job_queue.start_next
+  puts "  job-id:#{job.id} | status:#{job.status} | attempts:#{job.attempts}"
+  puts "  Marking 'job-1' failed and retrying failed 'job-1'"
+  job_queue.mark_failed('job-1')
+  job_queue.retry_failed('job-1')
+  puts '  Starting next job in the queue:'
+  job = job_queue.start_next
+  puts "  job-id:#{job.id} | status:#{job.status} | attempts:#{job.attempts}"
+  puts '  Starting next job in the queue:'
+  job = job_queue.start_next
+  puts "  job-id:#{job.id} | status:#{job.status} | attempts:#{job.attempts}"
 
 else
   puts 'Unknown exercise.'

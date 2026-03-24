@@ -120,3 +120,114 @@ RSpec.describe '#find_flaky_tests' do
     expect(find_flaky_tests(data)).to contain_exactly('a', 'b')
   end
 end
+
+RSpec.describe Job do
+  it 'stores id, status, and attempts' do
+    job = described_class.new('j1', 'pending', 0)
+    expect(job.id).to eq('j1')
+    expect(job.status).to eq('pending')
+    expect(job.attempts).to eq(0)
+  end
+
+  it 'allows mutation of attributes' do
+    job = described_class.new('j1', 'pending', 0)
+    job.status = 'running'
+    job.attempts += 1
+    expect(job.status).to eq('running')
+    expect(job.attempts).to eq(1)
+  end
+end
+
+RSpec.describe JobQueue do
+  let(:queue) { described_class.new(3) }
+
+  describe '#add_job' do
+    it 'adds a job with pending status' do
+      queue.add_job('j1')
+      expect(queue.jobs.first.id).to eq('j1')
+      expect(queue.jobs.first.status).to eq('pending')
+    end
+
+    it 'raises on duplicate job id' do
+      queue.add_job('j1')
+      expect { queue.add_job('j1') }.to raise_error(ArgumentError, 'duplicate job id')
+    end
+  end
+
+  describe '#start_next' do
+    it 'starts the first pending job' do
+      queue.add_job('j1')
+      job = queue.start_next
+      expect(job.status).to eq('running')
+      expect(job.attempts).to eq(1)
+    end
+
+    it 'returns nil when no pending jobs' do
+      expect(queue.start_next).to be_nil
+    end
+
+    it 'skips running jobs and picks next pending' do
+      queue.add_job('j1')
+      queue.add_job('j2')
+      queue.start_next
+      job = queue.start_next
+      expect(job.id).to eq('j2')
+    end
+  end
+
+  describe '#mark_completed' do
+    it 'marks a running job as completed' do
+      queue.add_job('j1')
+      queue.start_next
+      queue.mark_completed('j1')
+      expect(queue.jobs.first.status).to eq('completed')
+    end
+
+    it 'raises for a non-running job' do
+      queue.add_job('j1')
+      expect { queue.mark_completed('j1') }.to raise_error(RuntimeError, /invalid transition/)
+    end
+
+    it 'raises for unknown job id' do
+      expect { queue.mark_completed('nope') }.to raise_error(ArgumentError, 'job not found')
+    end
+  end
+
+  describe '#mark_failed' do
+    it 'marks a running job as failed' do
+      queue.add_job('j1')
+      queue.start_next
+      queue.mark_failed('j1')
+      expect(queue.jobs.first.status).to eq('failed')
+    end
+
+    it 'raises for a non-running job' do
+      queue.add_job('j1')
+      expect { queue.mark_failed('j1') }.to raise_error(RuntimeError, /invalid transition/)
+    end
+  end
+
+  describe '#retry_failed' do
+    it 'requeues a failed job as pending' do
+      queue.add_job('j1')
+      queue.start_next
+      queue.mark_failed('j1')
+      queue.retry_failed('j1')
+      expect(queue.jobs.first.status).to eq('pending')
+    end
+
+    it 'raises when job is not failed' do
+      queue.add_job('j1')
+      queue.start_next
+      expect { queue.retry_failed('j1') }.to raise_error(RuntimeError, 'job is not failed')
+    end
+
+    it 'raises when max attempts reached' do
+      q = described_class.new(1)
+      q.add_job('j1')
+      q.start_next
+      q.mark_failed('j1')
+      expect { q.retry_failed('j1') }.to raise_error(RuntimeError, 'max attempts reached')
+    end
+  end
+end
