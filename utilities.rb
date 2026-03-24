@@ -14,3 +14,41 @@ def aggregate_hash(data)
     agg[suite][status.to_sym] += 1
   end
 end
+
+# Sliding window rate limiter. O(log n) per call via binary search eviction.
+# Allows at most max_requests per key within a rolling window_seconds timeframe.
+class RateLimiter
+  def initialize(max_requests, window_seconds)
+    @max_requests = max_requests
+    @window_seconds = window_seconds
+    @requests = Hash.new { |hash, key| hash[key] = [] }
+  end
+
+  def allow?(key, timestamp)
+    timestamps = @requests[key]
+
+    # # Initial solution for readability
+    # # Keep only timestamps inside the rolling window
+    # recent_requests.shift while recent_requests.any? && recent_requests.first <= timestamp - @window_seconds
+
+    # if recent_requests.length < @max_requests
+    #   recent_requests << timestamp
+    #   true
+    # else
+    #   false
+    # end
+
+    cutoff = timestamp - @window_seconds
+
+    # Binary search for the first timestamp inside the window — O(log n)
+    idx = timestamps.bsearch_index { |t| t > cutoff } || timestamps.length
+    timestamps.slice!(0, idx)
+
+    if timestamps.length < @max_requests
+      timestamps << timestamp
+      true
+    else
+      false
+    end
+  end
+end

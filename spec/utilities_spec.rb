@@ -42,3 +42,31 @@ RSpec.describe '#aggregate_hash' do
     expect(result['b'][:failed]).to eq(1)
   end
 end
+
+RSpec.describe RateLimiter do
+  describe '#allow?' do
+    let(:limiter) { described_class.new(3, 10) }
+
+    it 'allows requests under the limit' do
+      expect(limiter.allow?('user1', 0)).to be true
+      expect(limiter.allow?('user1', 1)).to be true
+      expect(limiter.allow?('user1', 2)).to be true
+    end
+
+    it 'denies requests over the limit' do
+      3.times { |t| limiter.allow?('user1', t) }
+      expect(limiter.allow?('user1', 3)).to be false
+    end
+
+    it 'allows again after the window expires' do
+      3.times { |t| limiter.allow?('user1', t) }
+      expect(limiter.allow?('user1', 11)).to be true
+    end
+
+    it 'tracks users independently' do
+      3.times { |t| limiter.allow?('user1', t) }
+      expect(limiter.allow?('user1', 3)).to be false
+      expect(limiter.allow?('user2', 3)).to be true
+    end
+  end
+end
