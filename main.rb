@@ -25,6 +25,7 @@ puts '  wizardlist     - HTTP challenge: house => most-friends wizard'
 puts '  romantoint     - Roman number to integer number'
 puts '  aggdata        - Aggregate sample data'
 puts '  ratelimiter    - Simple rate limiter'
+puts '  flakytests     - Find flaky tests'
 puts
 print 'Enter exercise name: '
 
@@ -116,28 +117,46 @@ when 'romantoint'
   puts "  Integer number: #{roman_to_int(s)}"
 
 when 'aggdata'
-  puts '  Sample data input:'
-  pp AGGREGATE_HASH_DATA
-  puts '  Aggregated data output:'
-  pp aggregate_hash(AGGREGATE_HASH_DATA)
+  sample_data_to_agg = [
+    { suite: 'models', status: 'passed', duration: 12 },
+    { suite: 'models', status: 'failed', duration: 8 },
+    { suite: 'api',    status: 'passed', duration: 15 }
+  ]
+
+  puts '  Sample data:'
+  pp sample_data_to_agg
+  puts '  Aggregated data:'
+  pp aggregate_hash(sample_data_to_agg)
 
 when 'ratelimiter'
   max_requests = 3
   window_seconds = 10
-  limiter_tests = [
+  sample_limiter_tests = [
     ['user1', 0],
     ['user1', 1],
     ['user1', 2],
     ['user1', 3],
     ['user1', 11]
   ]
+
   puts "  Allow at most max requests is set to #{max_requests}"
   puts "  Within a rolling window seconds is set to #{window_seconds}"
   puts '  Will be tested against allow?'
   limiter = RateLimiter.new(max_requests, window_seconds)
-  limiter_tests.each do |user, timestamp|
+  sample_limiter_tests.each do |user, timestamp|
     puts "  user=#{user} time=#{timestamp} => #{limiter.allow?(user, timestamp)}"
   end
+
+when 'flakytests'
+  sample_flaky_tests = [
+    { test_name: 'creates user', status: 'passed' },
+    { test_name: 'creates user', status: 'failed' },
+    { test_name: 'deletes user', status: 'passed' }
+  ]
+  puts '  Sample data:'
+  pp sample_flaky_tests
+  puts '  Flaky test(s):'
+  pp find_flaky_tests(sample_flaky_tests)
 
 else
   puts 'Unknown exercise.'

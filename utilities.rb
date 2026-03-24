@@ -1,10 +1,6 @@
-# Aggregate test results by suite name. O(n) time, O(s) space where s = unique suites.
-AGGREGATE_HASH_DATA = [
-  { suite: 'models', status: 'passed', duration: 12 },
-  { suite: 'models', status: 'failed', duration: 8 },
-  { suite: 'api',    status: 'passed', duration: 15 }
-].freeze
+require 'set' # rubocop:disable Lint/RedundantRequireStatement
 
+# Aggregate test results by suite name. O(n) time, O(s) space where s = unique suites.
 def aggregate_hash(data)
   data.each_with_object(Hash.new { |h, k| h[k] = { total: 0, passed: 0, failed: 0, duration: 0 } }) do |entry, agg|
     suite, status, duration = entry.values_at(:suite, :status, :duration)
@@ -51,4 +47,14 @@ class RateLimiter
       false
     end
   end
+end
+
+# Find tests that both passed and failed across runs (flaky). O(n) time, O(t) space where t = unique tests.
+def find_flaky_tests(data)
+  seen_statuses = Hash.new { |hash, key| hash[key] = Set.new }
+
+  data.each do |single_data|
+    seen_statuses[single_data[:test_name]] << single_data[:status]
+  end
+  seen_statuses.select { |_test_name, statuses| statuses.include?('passed') && statuses.include?('failed') }.keys
 end

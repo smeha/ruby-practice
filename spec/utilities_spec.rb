@@ -1,11 +1,19 @@
 RSpec.describe '#aggregate_hash' do
+  let(:sample_data_to_agg) do
+    [
+      { suite: 'models', status: 'passed', duration: 12 },
+      { suite: 'models', status: 'failed', duration: 8 },
+      { suite: 'api',    status: 'passed', duration: 15 }
+    ]
+  end
+
   it 'aggregates multiple entries for the same suite' do
-    result = aggregate_hash(AGGREGATE_HASH_DATA)
+    result = aggregate_hash(sample_data_to_agg)
     expect(result['models']).to eq({ total: 2, passed: 1, failed: 1, duration: 20 })
   end
 
   it 'aggregates a suite with a single entry' do
-    result = aggregate_hash(AGGREGATE_HASH_DATA)
+    result = aggregate_hash(sample_data_to_agg)
     expect(result['api']).to eq({ total: 1, passed: 1, failed: 0, duration: 15 })
   end
 
@@ -68,5 +76,47 @@ RSpec.describe RateLimiter do
       expect(limiter.allow?('user1', 3)).to be false
       expect(limiter.allow?('user2', 3)).to be true
     end
+  end
+end
+
+RSpec.describe '#find_flaky_tests' do
+  it 'returns tests that both passed and failed' do
+    data = [
+      { test_name: 'login', status: 'passed' },
+      { test_name: 'login', status: 'failed' },
+      { test_name: 'signup', status: 'passed' }
+    ]
+    expect(find_flaky_tests(data)).to eq(['login'])
+  end
+
+  it 'returns empty when no tests are flaky' do
+    data = [
+      { test_name: 'login', status: 'passed' },
+      { test_name: 'signup', status: 'passed' }
+    ]
+    expect(find_flaky_tests(data)).to be_empty
+  end
+
+  it 'returns empty for empty input' do
+    expect(find_flaky_tests([])).to be_empty
+  end
+
+  it 'ignores tests that only failed' do
+    data = [
+      { test_name: 'broken', status: 'failed' },
+      { test_name: 'broken', status: 'failed' }
+    ]
+    expect(find_flaky_tests(data)).to be_empty
+  end
+
+  it 'detects multiple flaky tests' do
+    data = [
+      { test_name: 'a', status: 'passed' },
+      { test_name: 'a', status: 'failed' },
+      { test_name: 'b', status: 'passed' },
+      { test_name: 'b', status: 'failed' },
+      { test_name: 'c', status: 'passed' }
+    ]
+    expect(find_flaky_tests(data)).to contain_exactly('a', 'b')
   end
 end
