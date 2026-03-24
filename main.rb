@@ -1,8 +1,11 @@
+require 'pp'
+
 require_relative 'math'
 require_relative 'strings'
 require_relative 'sorting'
 require_relative 'arrays'
 require_relative 'http_json_practice'
+require_relative 'utilities'
 
 puts 'Available exercises:'
 puts '  prime          - Check if a number is prime'
@@ -20,6 +23,7 @@ puts '  timediff       - Minutes between two times (e.g. 9:00am-10:30pm)'
 puts '  maxsubarray    - Maximum subarray sum (Kadane\'s algorithm)'
 puts '  wizardlist     - HTTP challenge: house => most-friends wizard'
 puts '  romantoint     - Roman number to integer number'
+puts '  aggdata        - Aggregate sample data'
 puts
 print 'Enter exercise name: '
 
@@ -110,6 +114,11 @@ when 'romantoint'
   s = $stdin.gets.chomp
   puts "  Integer number: #{roman_to_int(s)}"
 
+when 'aggdata'
+  puts '  Sample data input:'
+  pp AGGREGATE_HASH_DATA
+  puts '  Aggregated data output:'
+  pp aggregate_hash(AGGREGATE_HASH_DATA)
 else
   puts 'Unknown exercise.'
 end

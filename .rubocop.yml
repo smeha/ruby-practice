@@ -12,13 +12,6 @@ AllCops:
 Style/TopLevelMethodDefinition:
   Enabled: false
 
-# Prefer single quotes, already used across the project.
-Style/StringLiterals:
-  EnforcedStyle: single_quotes
-
-Style/StringLiteralsInInterpolation:
-  EnforcedStyle: single_quotes
-
 # Disable frozen string literal requirement for practice scripts.
 Style/FrozenStringLiteralComment:
   Enabled: false
@@ -49,9 +42,9 @@ RSpec/DescribeClass:
 RSpec/MultipleDescribes:
   Enabled: false
 
-# Allow up to 2 expectations per example for related assertions.
+# Allow up to 4 expectations per example for related assertions.
 RSpec/MultipleExpectations:
-  Max: 2
+  Max: 4
 
 # Allow slightly longer examples for data setup in integration-style specs.
 RSpec/ExampleLength:

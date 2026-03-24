@@ -4,6 +4,7 @@ require_relative '../strings'
 require_relative '../sorting'
 require_relative '../arrays'
 require_relative '../http_json_practice'
+require_relative '../utilities'
 
 RSpec.configure do |config|
   config.expect_with :rspec do |c|
